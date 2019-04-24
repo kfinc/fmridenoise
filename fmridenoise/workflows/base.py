@@ -8,10 +8,9 @@ from nipype.interfaces import DataSink
 from ..interfaces.loading_bids import BIDSSelect, BIDSLoad
 from nipype import config
 config.enable_debug_mode()
-
 def init_fmridenoise_wf(bids_dir, derivatives=True,
                         # out_dir,
-                        pipelines_paths = glob.glob(os.path.dirname(fmridenoise.__file__) + "/pipelines/*"),
+                        pipelines_paths = glob.glob(os.path.dirname(fmridenoise.__path__._path[0]) + "/pipelines/*"),
                         #, desc=None,
                         # ignore=None, force_index=None,
                         # model=None, participants=None,
@@ -54,5 +53,5 @@ def init_fmridenoise_wf(bids_dir, derivatives=True,
 if __name__ == '__main__':
     bids_dir = '/home/siegfriedwagner/Documents/git/fmridenoise/data/fmridenoise'
     wf = init_fmridenoise_wf(bids_dir)
-    wf.run()
     wf.write_graph("workflow_graph.dot")
+    wf.run()
