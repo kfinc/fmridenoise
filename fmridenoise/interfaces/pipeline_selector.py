@@ -32,10 +32,7 @@ if __name__ == '__main__':
     from nipype import Node
     import glob
     reader = Node(PipelineSelector(), name="pipeline_selector")
-    for path in glob.glob("../pipelines/*"):
-        path = os.path.abspath(path)
-        print(path)
-        reader.inputs.pipeline_path = path
-        results = reader.run()
+
+    results = reader.run()
 
     print(results.outputs)

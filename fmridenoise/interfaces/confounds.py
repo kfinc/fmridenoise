@@ -10,6 +10,8 @@ import os
 from nipype.interfaces.base import BaseInterface, \
     BaseInterfaceInputSpec, traits, File, TraitedSpec
 from nipype.utils.filemanip import split_filename
+from fmridenoise.utils.confound_prep import prep_conf_df
+import fmridenoise
 
 class ConfoundsInputSpec(BaseInterfaceInputSpec):
     pipeline = traits.Dict(
@@ -41,7 +43,7 @@ class Confounds(BaseInterface):
         path, base, _ = split_filename(fname)
         fname_prep = f"{path}/{base}_{self.inputs.pipeline['name']}_prep.tsv"
         conf_df_prep.to_csv(fname_prep, sep='\t', index=False)
-
+        self._results['conf_prep'] = fname_prep
         return runtime
 
     def _list_outputs(self):
@@ -55,14 +57,15 @@ class Confounds(BaseInterface):
         return outputs
 
 if __name__ == "__main__":
-    import utils as ut
+    import fmridenoise.utils.utils as ut
 
-    jdicto = ut.load_pipeline_from_json("/home/kmb/Desktop/Neuroscience/" + \
-        "Projects/confound_removal/nbraingroup/fmridenoise/pipelines/36_parameters_spikes.json")
-    confpath = "/home/kmb/Desktop/Neuroscience/" + \
-        "Projects/confound_removal/nbraingroup/fmridenoise/pipelines/sub-kb01_task-prlrew_desc-confounds_regressors.tsv"
-
+    path_to_json = os.path.join(os.path.dirname(fmridenoise.__path__[0]), 'fmridenoise', 'pipelines', '36_parameters_spikes.json')
+    jdicto = ut.load_pipeline_from_json(path_to_json)
+    #confpath = "/home/kmb/Desktop/Neuroscience/" + \
+    #    "Projects/confound_removal/nbraingroup/fmridenoise/pipelines/sub-kb01_task-prlrew_desc-confounds_regressors.tsv"
+    confpath = "/home/siegfriedwagner/Documents/git/fmridenoise/bids_data/derivatives/fmriprep/sub-01/func/sub-01_task-rhymejudgment_desc-confounds_regressors.tsv"
     cf = Confounds()
     cf.inputs.pipeline = jdicto
     cf.inputs.conf_raw = confpath
-    cf.run()
+    result = cf.run()
+    print(result.outputs)
