@@ -41,7 +41,7 @@ def init_fmridenoise_wf(bids_dir, derivatives=True,
     # Outputs: fmri_preprocessed, confounds_raw, entities
 
     # Inputs: pipeline: Dict, conf_raw: File
-confound_prep = MapNode(interfaces.Confounds(), name="ConfoundPrep", iterfield=['conf_raw'])
+    confound_prep = MapNode(interfaces.Confounds(), name="ConfoundPrep", iterfield=['conf_raw'])
     # Outputs: conf_prep: File
 
     # AnyDataDumper - Node that converts anything into string, debug purpose
@@ -51,8 +51,8 @@ confound_prep = MapNode(interfaces.Confounds(), name="ConfoundPrep", iterfield=[
         return data
     anydatadumper = Node(Function(input_names=['data', 'dump_path'], output_names=['data'], function=data_dump), name="AnyDataDumper")
     anydatadumper.inputs.dump_path = "/home/siegfriedwagner/Documents/results/data_conf"
-#anydatadumper1 = Node(Function(input_names=['data', 'dump_path'], output_names=['data'], function=data_dump), name="AnyDataDumper1")
-    #anydatadumper1.inputs.dump_path = "/home/siegfriedwagner/Documents/results/data"
+    anydatadumper1 = Node(Function(input_names=['data', 'dump_path'], output_names=['data'], function=data_dump), name="AnyDataDumper1")
+    anydatadumper1.inputs.dump_path = "/home/siegfriedwagner/Documents/results/data"
     # Datasink
     # datasink = Node(DataSink(), name="sink")
     # datasink.inputs.base_directory = "/home/siegfriedwagner/Documents/results"
@@ -62,7 +62,7 @@ confound_prep = MapNode(interfaces.Confounds(), name="ConfoundPrep", iterfield=[
     wf.connect([(selecting_bids, confound_prep, [('confounds_raw', 'conf_raw')])])
     wf.connect([(pipelineselector, confound_prep, [('pipeline', 'pipeline')])])
     wf.connect([(confound_prep, anydatadumper, [('conf_prep', 'data')])])
-    #wf.connect([(selecting_bids, anydatadumper1, [('confounds_raw', 'data')])])
+    wf.connect([(selecting_bids, anydatadumper1, [('confounds_raw', 'data')])])
     return wf
 #prepconfounds = Node()
 
